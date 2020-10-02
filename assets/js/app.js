@@ -45,8 +45,8 @@ function xScale(demographicsData, chosenXAxis) {
 function yScale(demographicsData, chosenYAxis) {
   // create scales
   var yLinearScale = d3.scaleLinear()
-    .domain([d3.min(demographicsData, d => d[chosenyAxis]) * 0.8,
-    d3.max(demographicsData, d => d[chosenYAxis]) * 1.2
+    .domain([d3.min(demographicsData, d => d[chosenYAxis]) -1,
+    d3.max(demographicsData, d => d[chosenYAxis]) + 1
     ])
     .range([height, 0]);
 
@@ -57,7 +57,6 @@ function yScale(demographicsData, chosenYAxis) {
 // function used for updating xAxis var upon click on axis label
 function renderXAxes(newXScale, xAxis) {
   var bottomAxis = d3.axisBottom(newXScale);
-
   xAxis.transition()
     .duration(1000)
     .call(bottomAxis);
@@ -67,7 +66,6 @@ function renderXAxes(newXScale, xAxis) {
 // function used for updating yAxis var upon click on axis label
 function renderYAxes(newYScale, yAxis) {
   var leftAxis = d3.axisLeft(newYScale);
-
   yAxis.transition()
     .duration(1000)
     .call(leftAxis);
@@ -77,7 +75,6 @@ function renderYAxes(newYScale, yAxis) {
 // function used for updating circles group with a transition to
 // new circles
 function renderXCircles(circlesGroup, newXScale, chosenXAxis) {
-
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]))
@@ -86,7 +83,6 @@ function renderXCircles(circlesGroup, newXScale, chosenXAxis) {
 // function used for updating circles group with a transition to
 // new circles
 function renderYCircles(circlesGroup, newYScale, chosenYAxis) {
-
   circlesGroup.transition()
     .duration(1000)
     .attr("cy", d => newYScale(d[chosenYAxis]))
@@ -95,16 +91,14 @@ function renderYCircles(circlesGroup, newYScale, chosenYAxis) {
 
 // functions used for updating labels with a transition to
 // new circles
-function xLabels
-  (circlesGroup, newXScale, chosenXaxis) {
+function xLabels(circlesGroup, newXScale, chosenXAxis) {
   circlesGroup.transition()
     .duration(1000)
     .attr("dx", d => newXScale(d[chosenXAxis]));
-
   return circlesGroup;
 }
 
-function yLabels(circlesGroup, newYScale, chosenYaxis) {
+function yLabels(circlesGroup, newYScale, chosenYAxis) {
   circlesGroup.transition()
     .duration(1000)
     .attr("dy", d => newYScale(d[chosenYAxis]) + 5);
@@ -113,45 +107,40 @@ function yLabels(circlesGroup, newYScale, chosenYaxis) {
 }
 
 // function used for updating circles group with new tooltip
-function updateToolTip(chosenXAxis, circlesGroup) {
+function updateToolTip(circlesGroup, chosenXAxis, chosenYAxis) {
 
   var xlabel;
   if (chosenXAxis === "obesity") {
-    label = "Obesity:";
+    xlabel = "Obesity";
   }
   else {
-    label = "Cigarette Use:";
+    xlabel = "Cigarette Use";
   }
   var ylabel;
-  if (chosenXAxis === "poverty") {
-    label = "Poverty:";
+  if (chosenYAxis === "poverty") {
+    ylabel = "Poverty";
   }
   else {
-    label = "Healthcare:";
+    ylabel = "Healthcare";
   }
 
   var toolTip = d3.tip()
     .attr("class", "tooltip")
     .offset([80, -60])
     .html(function (d) {
-      if (chosenXAxis === "obesity"){
-        let obLevel = (d[chosenXAxis]);
-
-        return (`${d.state}<br>${xlabel}: ${obLevel.substring(0, obLevel.length-3)}<br>${ylabel}: ${d[chosenYAxis]}`)
-      } else {
         return (`${d.state}<br>${xlabel}: ${d[chosenXAxis]}<br>${ylabel}: ${d[chosenYAxis]}`)
-      };
-    });
+      })
+    
 
   circlesGroup.call(toolTip);
 
   circlesGroup.on("mouseover", function (data) {
-    toolTip.show(data);
+    toolTip.show(data, this);
   })
     // onmouseout event
     .on("mouseout", function (data, index) {
-      toolTip.hide(data);
-    });
+      toolTip.hide(data, this);
+    })
 
   return circlesGroup;
 }
@@ -187,14 +176,14 @@ d3.csv("/assets/data/data.csv").then(function (demographicsData) {
     .call(bottomAxis);
 
   // append y axis to chart
-  chartGroup.append("g")
+  var yAxis = chartGroup.append("g")
     .call(leftAxis);
 
   // append initial circles
   var circlesGroup = chartGroup.selectAll("g circle").data(demographicsData).enter().append("g")
-  // circlesGroup  
 
-  var circlesAesthetics = circlesGroup.append("circle")
+  // circlesGroup  
+  var circlesAxes = circlesGroup.append("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
     .attr("r", 9)
@@ -272,7 +261,7 @@ d3.csv("/assets/data/data.csv").then(function (demographicsData) {
     .classed("axis-text", true)
 
   // updateToolTip function above csv import
-  circlesGroup = updateToolTip(chosenXAxis, chosenYAxis);
+  circlesGroup = updateToolTip(circlesGroup, chosenXAxis, chosenYAxis);
 
   // x axis labels event listener
   xLabelsGroup.selectAll("text")
@@ -292,7 +281,7 @@ d3.csv("/assets/data/data.csv").then(function (demographicsData) {
         xAxis = renderXAxes(xLinearScale, xAxis);
 
         // updates circles with new x values
-        circlesXY = renderXCircles(circlesXY, xLinearScale, chosenXAxis);
+        circlesAxes = renderXCircles(circlesAxes, xLinearScale, chosenXAxis);
 
         // updates circles text with new x values
         circlesLabels = xLabels(circlesLabels, xLinearScale, chosenXAxis);
@@ -337,7 +326,7 @@ d3.csv("/assets/data/data.csv").then(function (demographicsData) {
         yAxis = renderYAxes(yLinearScale, yAxis);
 
         // updates circles with new y values
-        circlesXY = renderYCircles(circlesXY, yLinearScale, chosenYAxis);
+        circlesAxes = renderYCircles(circlesAxes, yLinearScale, chosenYAxis);
 
         // updates circles text with new y values
         circlesLabels = yLabels(circlesLabels, yLinearScale, chosenYAxis);
