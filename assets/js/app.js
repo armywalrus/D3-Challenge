@@ -55,7 +55,22 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
 
   circlesGroup.transition()
     .duration(1000)
-    .attr("cx", d => newXScale(d[chosenXAxis]));
+    .attr("cx", d => newXScale(d[chosenXAxis]))
+    .append("text")
+    //We return the abbreviation to .text, which makes the text the abbreviation.
+    .text(function (d) {
+      return d.states.slice(0,2);
+    })
+    //Now place the text using our scale.
+    .attr("dx", function (d) {
+      return xLinearScale(d['obesity']) - 10;
+  })
+    .attr("dy", function (d) {
+      // When the size of the text is the radius,
+      // adding a third of the radius to the height
+      // pushes it into the middle of the circle.
+      return yLinearScale(d['poverty']) + 10 / 2.5;
+  })
 
   return circlesGroup;
 }
@@ -96,7 +111,7 @@ d3.csv("/assets/data/data.csv").then(function (demographicsData) {
   
   // parse data
   demographicsData.forEach(function(data) {
-    console.log(data.obesity);
+    // console.log(data.obesity);
     data.obesity = +data.obesity;
     data.poverty = +data.poverty;
     data.smokes = +data.smokes;
@@ -139,7 +154,7 @@ d3.csv("/assets/data/data.csv").then(function (demographicsData) {
   var obesityLabel = labelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 20)
-    .attr("value", "obesityh") // value to grab for event listener
+    .attr("value", "obesity") // value to grab for event listener
     .classed("active", true)
     .text("Obesity");
 
@@ -148,7 +163,7 @@ d3.csv("/assets/data/data.csv").then(function (demographicsData) {
     .attr("y", 40)
     .attr("value", "smokes") // value to grab for event listener
     .classed("inactive", true)
-    .text("Smokes");
+    .text("Cigarette Use");
 
   // append y axis
   chartGroup.append("text")
