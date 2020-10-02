@@ -127,34 +127,16 @@ d3.csv("/assets/data/data.csv").then(function (demographicsData) {
     .call(leftAxis);
 
   // append initial circles
-  var circlesGroup = chartGroup.selectAll("circle").data(demographicsData).enter()
-  circlesGroup
-  .append("circle")
-  .attr("cx", d => xLinearScale(d[chosenXAxis]))
-  .attr("cy", d => yLinearScale(d.poverty))
-  .attr("r", 20)
-  .attr("fill", "lightblue")
-  .attr("opacity", ".8")
+  var circlesGroup = chartGroup.selectAll("circle")
+    .data(demographicsData)
+    .enter()
+    .append("circle")
+    .attr("cx", d => xLinearScale(d[chosenXAxis]))
+    .attr("cy", d => yLinearScale(d.poverty))
+    .attr("r", 20)
+    .attr("fill", "lightblue")
+    .attr("opacity", ".8")
 
-
-  circlesGroup
-      .append("text")
-      //We return the abbreviation to .text, which makes the text the abbreviation.
-      .text(function (d) {
-          return d.state.slice(0,2);
-      })
-      //Now place the text using our scale.
-      .attr("dx", function (d) {
-          return xLinearScale(d['obesity']) - 10;
-      })
-      .attr("dy", function (d) {
-          // When the size of the text is the radius,
-          // adding a third of the radius to the height
-          // pushes it into the middle of the circle.
-          return yLinearScale(d['poverty']) + 10 / 2.5;
-      })
-      .attr("font-size", 15)
-      .attr("class", "stateText")
 
 
 
