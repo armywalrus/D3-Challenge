@@ -19,8 +19,9 @@
 }
 
 .inactive:hover {
-  fill: #000;
+  fill: skyblue;
   cursor: pointer;
+  text-decoration: underline
 }
 
 /* font size dependent on radius, see app.js */
@@ -33,6 +34,13 @@
 .stateCircle {
   fill: #89bdd3;
   stroke: #e3e3e3;
+}
+
+.stateCircle:hover {
+  fill: #89bdd3;
+  stroke: #e3e3e3;
+  border-width: 1px;
+  border-color: blue;
 }
 
 .chart {

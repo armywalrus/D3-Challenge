@@ -1,5 +1,7 @@
-#hairmetal {
+body {
   border-radius: 8px;
+  background-color: linen;
+
 }
 
 .chart::before {
@@ -29,6 +31,25 @@
   background: green;
   border: 0;
   border-radius: 10px;
+}
+
+
+.tooltip:hover  {
+  border-style: groove;
+  border-color: blue;
+  border-width: 1px;
+}
+
+.stateCircle {
+  fill: #89bdd3;
+  stroke: #e3e3e3;
+}
+
+.stateCircle:hover {
+  fill: #89bdd3;
+  stroke: #e3e3e3;
+  border-width: 1px;
+  border-color: blue;
 }
 
 .axis-text {
