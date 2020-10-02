@@ -2,6 +2,7 @@
 // Assign height and width to variables
 var svgWidth = 960;
 var svgHeight = 500;
+
 // Assign margins
 var margin = {
   top: 20,
@@ -10,7 +11,7 @@ var margin = {
   left: 100
 };
 
-// Account for amrgins when declaring height/width
+// Account for margins when declaring height/width
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
@@ -37,7 +38,7 @@ function xScale(demographicsData, chosenXAxis) {
     .range([0, width]);
 
   return xLinearScale;
-  }
+}
 
 // function used for updating xAxis var upon click on axis label
 function renderAxes(newXScale, xAxis) {
@@ -56,21 +57,7 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]))
-    .append("text")
-    //We return the abbreviation to .text, which makes the text the abbreviation.
-    .text(function (d) {
-      return d.states.slice(0,2);
-    })
-    //Now place the text using our scale.
-    .attr("dx", function (d) {
-      return xLinearScale(d['obesity']) - 10;
-  })
-    .attr("dy", function (d) {
-      // When the size of the text is the radius,
-      // adding a third of the radius to the height
-      // pushes it into the middle of the circle.
-      return yLinearScale(d['poverty']) + 10 / 2.5;
-  })
+
 
   return circlesGroup;
 }
@@ -108,31 +95,34 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 // Retrieve data from the CSV file and execute everything below
 d3.csv("/assets/data/data.csv").then(function (demographicsData) {
   console.log(demographicsData)
-  
+
   // parse data
-  demographicsData.forEach(function(data) {
+  demographicsData.forEach(function (data) {
     // console.log(data.obesity);
     data.obesity = +data.obesity;
     data.poverty = +data.poverty;
     data.smokes = +data.smokes;
   });
+
+  // Create scale functions
   // xLinearScale function above csv import
   var xLinearScale = xScale(demographicsData, chosenXAxis);
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
     .domain([0, d3.max(demographicsData, d => d.poverty)])
     .range([height, 0]);
+
   // Create initial axis functions
   var bottomAxis = d3.axisBottom(xLinearScale);
   var leftAxis = d3.axisLeft(yLinearScale);
 
-  // append x axis
+  // append x axis to chart
   var xAxis = chartGroup.append("g")
     .classed("x-axis", true)
     .attr("transform", `translate(0, ${height})`)
     .call(bottomAxis);
 
-  // append y axis
+  // append y axis to chart
   chartGroup.append("g")
     .call(leftAxis);
 
@@ -144,8 +134,30 @@ d3.csv("/assets/data/data.csv").then(function (demographicsData) {
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d.poverty))
     .attr("r", 20)
-    .attr("fill", "blue")
-    .attr("opacity", ".5");
+    .attr("fill", "lightblue")
+    .attr("opacity", ".8")
+
+
+    circlesGroup
+        .append("text")
+        //We return the abbreviation to .text, which makes the text the abbreviation.
+        .text(function (d) {
+            return d.state.slice(0,2);
+        })
+        //Now place the text using our scale.
+        .attr("dx", function (d) {
+            return xLinearScale(d['obesity']) - 10;
+        })
+        .attr("dy", function (d) {
+            // When the size of the text is the radius,
+            // adding a third of the radius to the height
+            // pushes it into the middle of the circle.
+            return yLinearScale(d['poverty']) + 10 / 2.5;
+        })
+        .attr("font-size", 15)
+        .attr("class", "stateText")
+
+
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
