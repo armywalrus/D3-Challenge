@@ -4,6 +4,11 @@ body {
 
 }
 
+#footer {
+  font-family: sans-serif;
+  font-size: 12px;
+}
+
 .chart::before {
   position: absolute;
   top: 50px;
@@ -68,7 +73,7 @@ body {
 }
 
 .inactive {
-  font-weight: lighter;
+  /* font-weight: lighter; */
   fill: #551aaf;
   transition: fill 0.3s ease-out;
   text-anchor: middle;
