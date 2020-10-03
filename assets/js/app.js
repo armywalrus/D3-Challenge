@@ -142,7 +142,7 @@ function updateToolTip(circlesGroup, chosenXAxis, chosenYAxis) {
     // onmouseout event
     .on("mouseout", function (data, index) {
       toolTip.hide(data, this);
-      d3.select(this).style("stroke", "#e3e3e3")
+      d3.select(this).style("stroke", "#ffffff")
     })
 
   return circlesGroup;
