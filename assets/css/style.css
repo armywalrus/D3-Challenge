@@ -73,7 +73,7 @@ body {
 }
 
 .inactive {
-  /* font-weight: lighter; */
+  font-weight: lighter;
   fill: #551aaf;
   transition: fill 0.3s ease-out;
   text-anchor: middle;
